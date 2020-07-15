@@ -1,1 +1,41 @@
-alert('Hello');
+/* GLOBAL CONSTANTS */
+const ROWS = 16;
+const COLUMNS = 16;
+
+/**
+ * Create an element with the specified classes attached.
+ * @param  {String} element    - Name of HTML element to create.
+ * @param  {Object} classNames - At least one class name argument(s).
+ * @return {Object}            - Element with specified classes.
+ */
+function createElementWithClasses(element, ...classNames) {
+    const newElement = document.createElement(element);
+    newElement.classList.add(...classNames);
+    return newElement;
+}
+
+/**
+ * Create a grid for the sketchpad with dimensions using constants.
+ * @return {Object} - Element containing grid with rows and columns.
+ */
+function createGrid() {
+    // Container for 16x16 grid of square divs.
+    const grid = createElementWithClasses('div', 'grid');
+    let currRow;
+    let currCol;
+
+    for (let i = 0; i < ROWS; i++) {
+        currRow = createElementWithClasses('div', 'grid__row');
+        for (let j = 0; j < COLUMNS; j++) {
+            currCol = createElementWithClasses('div', 'grid__col');
+            currRow.appendChild(currCol);
+        }
+        grid.appendChild(currRow);
+    }
+
+    return grid;
+}
+
+const scriptElement = document.querySelector('script');
+const gridContainer = createGrid();
+document.body.insertBefore(gridContainer, scriptElement);
