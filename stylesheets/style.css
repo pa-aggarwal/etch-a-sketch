@@ -1,3 +1,10 @@
+:root {
+    --grid-border-width: .2rem;
+    --grid-height: calc(48rem - var(--grid-border-width));
+    /* Changed in script.js file. */
+    --grid-size: 16;
+}
+
 body {
     font-size: 1.6rem;
     font-family: 'Roboto', sans-serif;
@@ -17,13 +24,14 @@ h1 {
 }
 
 .grid {
-    border: .2rem solid #000;
+    border: var(--grid-border-width) solid #000;
     width: 96rem;
 }
 
 .grid__row {
     display: flex;
-    height: 3rem;
+    /* Grid height stays constant and only number of rows/columns changes. */
+    height: calc(var(--grid-height) / var(--grid-size));
     width: 100%;
 }
 

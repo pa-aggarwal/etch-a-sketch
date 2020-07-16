@@ -1,6 +1,8 @@
-/* GLOBAL CONSTANTS */
-const ROWS = 16;
-const COLUMNS = 16;
+/* GLOBAL VARIABLES */
+let rows = 16;
+let columns = 16;
+let gridContainer = createGrid();
+let gridRows = Array.from(gridContainer.getElementsByClassName('grid__row'));
 
 /**
  * Create an element with the specified classes attached.
@@ -24,9 +26,9 @@ function createGrid() {
     let currRow;
     let currCol;
 
-    for (let i = 0; i < ROWS; i++) {
+    for (let i = 0; i < rows; i++) {
         currRow = createElementWithClasses('div', 'grid__row');
-        for (let j = 0; j < COLUMNS; j++) {
+        for (let j = 0; j < columns; j++) {
             currCol = createElementWithClasses('div', 'grid__col');
             currRow.appendChild(currCol);
         }
@@ -64,9 +66,60 @@ function addHoverEvent(gridRows) {
     }
 }
 
+/**
+ * Clear the sketchpad grid by removing all coloured cells.
+ * @param {Object} gridRows - Array of elements with class `grid__row`.
+ */
+function clearGrid(gridRows) {
+    let gridColArr;
+    for (let i = 0; i < gridRows.length; i++) {
+        gridColArr = Array.from(gridRows[i].childNodes);
+        for (let k = 0; k < gridColArr.length; k++) {
+            if (gridColArr[k].classList.contains('color-square')) {
+                gridColArr[k].classList.remove('color-square');
+            }
+        }
+    }
+}
+
+/**
+ * Replace the current sketchpad grid given new dimensions.
+ * @param {Number} newSize - Number of rows and columns in the new grid.
+ */
+function updateGrid(newSize) {
+    // Reassign global variables used to create new grid.
+    rows = newSize;
+    columns = newSize;
+    // Create new grid, other required variables.
+    const newGrid = createGrid();
+    const oldGrid = document.querySelector('.grid');
+    const root = document.documentElement;
+    // Reassign global variable `gridRows` used for clearing the grid.
+    gridRows = Array.from(newGrid.getElementsByClassName('grid__row'));
+    root.style.setProperty('--grid-size', newSize.toString());
+    document.body.replaceChild(newGrid, oldGrid);
+    addHoverEvent(gridRows);
+}
+
 // Inserting sketchpad inside document.
 const scriptElement = document.querySelector('script');
-const gridContainer = createGrid();
 document.body.insertBefore(gridContainer, scriptElement);
 
-addHoverEvent(Array.from(gridContainer.getElementsByClassName('grid__row')));
+// Drawing on the sketchpad.
+addHoverEvent(gridRows);
+
+// Clearing the sketchpad.
+const clearGridButton = document.querySelector('.clear-input');
+clearGridButton.addEventListener('click', () => clearGrid(gridRows));
+
+// Updating the grid-size.
+const gridSizeInput = document.querySelector('.size-input');
+gridSizeInput.defaultValue = rows.toString();
+gridSizeInput.addEventListener('change', function() {
+    // Value equals empty string if input is not expected type (numeric).
+    if (gridSizeInput.value) {
+        console.log(gridSizeInput.value);
+        clearGrid(gridRows);
+        updateGrid(gridSizeInput.value);
+    }
+});
