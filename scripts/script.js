@@ -36,6 +36,37 @@ function createGrid() {
     return grid;
 }
 
+/**
+ * When hovering a grid-cell without color, draw (apply color) on that cell,
+ * else remove the color.
+ */
+function toggleDraw() {
+    const gridSquareClasses = this.classList;
+    const className = 'color-square';
+    if (gridSquareClasses.contains(className)) {
+        gridSquareClasses.remove(className);
+    } else {
+        gridSquareClasses.add(className);
+    }
+}
+
+/**
+ * Add event listeners for when grid cells are hovered.
+ * @param {Object} gridRows - Array of elements with class `grid__row`.
+ */
+function addHoverEvent(gridRows) {
+    let gridColArr;
+    for (let i = 0; i < gridRows.length; i++) {
+        gridColArr = Array.from(gridRows[i].childNodes);
+        for (let k = 0; k < gridColArr.length; k++) {
+            gridColArr[k].addEventListener('mouseenter', toggleDraw);
+        }
+    }
+}
+
+// Inserting sketchpad inside document.
 const scriptElement = document.querySelector('script');
 const gridContainer = createGrid();
 document.body.insertBefore(gridContainer, scriptElement);
+
+addHoverEvent(Array.from(gridContainer.getElementsByClassName('grid__row')));

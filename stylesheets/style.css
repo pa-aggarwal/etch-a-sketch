@@ -1,12 +1,23 @@
 body {
     font-size: 1.6rem;
     font-family: 'Roboto', sans-serif;
+    padding: 2rem 3rem;
+    /* Horizontally and vertically centered relative to root element. */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+h1 {
+    display: inline-block;
+    font-family: 'Oregano', cursive;
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
 }
 
 .grid {
-    border: .1rem solid #000;
-    /* Horizontally center the grid. */
-    margin: 0 auto;
+    border: .2rem solid #000;
     width: 96rem;
 }
 
@@ -18,3 +29,6 @@ body {
 
 /* Each column uses equal amount of space. */
 .grid__col { flex: 1; }
+
+/* Class toggled when grid-squares are hovered. */
+.color-square { background-color: #9BF6FF; }
