@@ -21,7 +21,7 @@ function createElementWithClasses(element, ...classNames) {
  * @return {Object} - Element containing grid with rows and columns.
  */
 function createGrid() {
-    // Container for 16x16 grid of square divs.
+    // Container for rows x columns grid of square divs.
     const grid = createElementWithClasses('div', 'grid');
     let currRow;
     let currCol;
@@ -42,12 +42,10 @@ function createGrid() {
  * When hovering a grid-cell without color, draw (apply color) on that cell,
  * else remove the color.
  */
-function toggleDraw() {
+function draw() {
     const gridSquareClasses = this.classList;
     const className = 'color-square';
-    if (gridSquareClasses.contains(className)) {
-        gridSquareClasses.remove(className);
-    } else {
+    if (!gridSquareClasses.contains(className)) {
         gridSquareClasses.add(className);
     }
 }
@@ -61,7 +59,7 @@ function addHoverEvent(gridRows) {
     for (let i = 0; i < gridRows.length; i++) {
         gridColArr = Array.from(gridRows[i].childNodes);
         for (let k = 0; k < gridColArr.length; k++) {
-            gridColArr[k].addEventListener('mouseenter', toggleDraw);
+            gridColArr[k].addEventListener('mouseenter', draw);
         }
     }
 }
@@ -118,7 +116,6 @@ gridSizeInput.defaultValue = rows.toString();
 gridSizeInput.addEventListener('change', function() {
     // Value equals empty string if input is not expected type (numeric).
     if (gridSizeInput.value) {
-        console.log(gridSizeInput.value);
         clearGrid(gridRows);
         updateGrid(gridSizeInput.value);
     }

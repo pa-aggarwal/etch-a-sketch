@@ -1,9 +1,20 @@
 :root {
-    --grid-border-width: .2rem;
+    /* COLORS */
+    --color-black: #000;
+    --color-white: #FFF;
+    --color-grey: #F5F5F5;
+    --color-turquoise: #2EC4B6;
+    --color-turquoise-med: #9CE8E0;
+    --color-turquoise-light: #DEF7F6;
+    /* SIZES */
+    --grid-border-width: .4rem;
     --grid-height: calc(48rem - var(--grid-border-width));
-    /* Changed in script.js file. */
-    --grid-size: 16;
+    --grid-size: 16; /* Changed in script.js file. */
+    --input-font-size: 2rem;
+    --input-hori-padding: 2rem;
 }
+
+html { background-color: var(--color-turquoise-light); }
 
 body {
     font-size: 1.6rem;
@@ -17,14 +28,59 @@ body {
 }
 
 h1 {
+    color: var(--color-turquoise);
     display: inline-block;
     font-family: 'Oregano', cursive;
-    font-size: 5rem;
-    margin-bottom: 1.5rem;
+    font-size: 5.5rem;
+    text-shadow: .3rem -.3rem var(--color-turquoise-med);
+}
+
+input {
+    background-color: var(--color-turquoise);
+    border-radius: .5rem;
+    color: var(--color-white);
+    display: inline-block;
+}
+
+/* Remove spinners from number input. */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.top-container {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-right: 1rem;
+}
+
+.options-container {
+    display: inline-block;
+    font-size: var(--input-font-size);
+}
+
+.clear-input {
+    margin-right: 2rem;
+    padding: 1rem var(--input-hori-padding);
+    text-transform: uppercase;
+}
+
+.size-input {
+    padding: 1rem var(--input-hori-padding);
+    width:
+        calc(
+            var(--input-font-size) +
+            calc(var(--input-hori-padding) * 2) +
+            .75rem
+        );
 }
 
 .grid {
-    border: var(--grid-border-width) solid #000;
+    background-color: var(--color-white);
+    border: var(--grid-border-width) solid var(--color-black);
     width: 96rem;
 }
 
@@ -35,8 +91,20 @@ h1 {
     width: 100%;
 }
 
-/* Each column uses equal amount of space. */
-.grid__col { flex: 1; }
+.grid__col {
+    border: .075rem solid var(--color-grey);
+    border-radius: .3rem;
+    /* Each column uses equal amount of space. */
+    flex: 1;
+}
 
 /* Class toggled when grid-squares are hovered. */
-.color-square { background-color: #9BF6FF; }
+.color-square {
+    animation: .2s ease-in forwards fadeIn;
+    background-color: var(--color-turquoise-med);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
