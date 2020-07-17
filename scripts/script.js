@@ -1,6 +1,9 @@
 /* GLOBAL VARIABLES */
 let numRows = 16;
 let numCols = 16;
+let defaultGridColor = 'rgb(255, 255, 255)';
+let defaultCellColor = '#9CE8E0';
+let currCellColor = defaultCellColor;
 let gridContainer = createGrid();
 let gridCells = getGridCells(gridContainer);
 
@@ -23,13 +26,15 @@ function createElementWithClasses(element, ...classNames) {
 function createGrid() {
     // Container for grid of square divs.
     const grid = createElementWithClasses('div', 'grid');
+    let cellClasses = ['grid__cell', 'animate-cell'];
     let currRow;
     let currCell;
 
     for (let i = 0; i < numRows; i++) {
         currRow = createElementWithClasses('div', 'grid__row');
         for (let j = 0; j < numCols; j++) {
-            currCell = createElementWithClasses('div', 'grid__cell');
+            currCell = createElementWithClasses('div', ...cellClasses);
+            currCell.style.backgroundColor = defaultGridColor;
             currRow.appendChild(currCell);
         }
         grid.appendChild(currRow);
@@ -57,14 +62,12 @@ function getGridCells(grid) {
 }
 
 /**
- * When hovering a grid-cell without color, draw (apply color) on that cell,
- * else remove the color.
+ * If a grid-cell's background-color is the grid's color (white), change the
+ * background-color based on the current global cell color.
  */
 function draw() {
-    const gridCellClasses = this.classList;
-    const className = 'color-square';
-    if (!gridCellClasses.contains(className)) {
-        gridCellClasses.add(className);
+    if (this.style.backgroundColor === defaultGridColor) {
+        this.style.backgroundColor = currCellColor;
     }
 }
 
@@ -79,13 +82,13 @@ function addHoverEvent(gridCells) {
 }
 
 /**
- * Clear the sketchpad grid by removing all coloured cells.
+ * Set all cell's background-colors to the original grid color.
  * @param {Object} gridCells - Array of elements with class `grid__cell`.
  */
 function clearGrid(gridCells) {
     for (let i = 0; i < gridCells.length; i++) {
-        if (gridCells[i].classList.contains('color-square')) {
-            gridCells[i].classList.remove('color-square');
+        if (gridCells[i].style.backgroundColor !== defaultGridColor) {
+            gridCells[i].style.backgroundColor = defaultGridColor;
         }
     }
 }
@@ -109,6 +112,15 @@ function updateGrid(newSize) {
     addHoverEvent(gridCells);
 }
 
+/**
+ * Update global variable holding the current grid-cell background color.
+ */
+function updateCellColor() {
+    // Keep colors in uppercase format.
+    const newColor = this.value.toUpperCase();
+    currCellColor = newColor;
+}
+
 // Inserting sketchpad inside document.
 const scriptElement = document.querySelector('script');
 document.body.insertBefore(gridContainer, scriptElement);
@@ -130,3 +142,10 @@ gridSizeInput.addEventListener('change', function() {
         updateGrid(gridSizeInput.value);
     }
 });
+
+// Update the gridColor variable to user's preference.
+const colorPicker = document.querySelector('.color-input');
+colorPicker.setAttribute('value', defaultCellColor);
+colorPicker.setAttribute('placeholder', defaultCellColor);
+colorPicker.addEventListener('change', updateCellColor);
+// TODO: implement select() call.

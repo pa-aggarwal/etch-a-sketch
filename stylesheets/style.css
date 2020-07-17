@@ -91,18 +91,15 @@ input[type="number"]::-webkit-outer-spin-button {
     width: 100%;
 }
 
-    border: .075rem solid var(--color-grey);
 .grid__cell {
+    border: .075rem solid var(--color-grey-light);
     border-radius: .3rem;
     /* Each cell uses equal amount of space. */
     flex: 1;
 }
 
-/* Class toggled when grid-cells are hovered. */
-.color-square {
-    animation: .2s ease-in forwards fadeIn;
-    background-color: var(--color-turquoise-med);
-}
+/* Animate the way grid-cells are drawn. */
+.animate-cell { animation: .2s ease-in forwards fadeIn; }
 
 @keyframes fadeIn {
     from { opacity: 0; }
