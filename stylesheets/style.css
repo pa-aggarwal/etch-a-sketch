@@ -91,14 +91,14 @@ input[type="number"]::-webkit-outer-spin-button {
     width: 100%;
 }
 
-.grid__col {
     border: .075rem solid var(--color-grey);
+.grid__cell {
     border-radius: .3rem;
-    /* Each column uses equal amount of space. */
+    /* Each cell uses equal amount of space. */
     flex: 1;
 }
 
-/* Class toggled when grid-squares are hovered. */
+/* Class toggled when grid-cells are hovered. */
 .color-square {
     animation: .2s ease-in forwards fadeIn;
     background-color: var(--color-turquoise-med);

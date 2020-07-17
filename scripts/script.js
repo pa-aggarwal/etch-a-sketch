@@ -1,8 +1,8 @@
 /* GLOBAL VARIABLES */
-let rows = 16;
-let columns = 16;
+let numRows = 16;
+let numCols = 16;
 let gridContainer = createGrid();
-let gridRows = Array.from(gridContainer.getElementsByClassName('grid__row'));
+let gridCells = getGridCells(gridContainer);
 
 /**
  * Create an element with the specified classes attached.
@@ -21,16 +21,16 @@ function createElementWithClasses(element, ...classNames) {
  * @return {Object} - Element containing grid with rows and columns.
  */
 function createGrid() {
-    // Container for rows x columns grid of square divs.
+    // Container for grid of square divs.
     const grid = createElementWithClasses('div', 'grid');
     let currRow;
-    let currCol;
+    let currCell;
 
-    for (let i = 0; i < rows; i++) {
+    for (let i = 0; i < numRows; i++) {
         currRow = createElementWithClasses('div', 'grid__row');
-        for (let j = 0; j < columns; j++) {
-            currCol = createElementWithClasses('div', 'grid__col');
-            currRow.appendChild(currCol);
+        for (let j = 0; j < numCols; j++) {
+            currCell = createElementWithClasses('div', 'grid__cell');
+            currRow.appendChild(currCell);
         }
         grid.appendChild(currRow);
     }
@@ -39,43 +39,53 @@ function createGrid() {
 }
 
 /**
+ * Create an array containing all grid-cells inside the current grid.
+ * @param  {Object} grid - Element containing grid with rows and columns.
+ * @return {Object}      - Array of elements with class `grid__cell`.
+ */
+function getGridCells(grid) {
+    const gridRows = Array.from(grid.getElementsByClassName('grid__row'));
+    let gridCellsArr = [];
+    let gridRowCellsArr;
+    for (let i = 0; i < gridRows.length; i++) {
+        gridRowCellsArr = Array.from(gridRows[i].childNodes);
+        for (let k = 0; k < gridRowCellsArr.length; k++) {
+            gridCellsArr.push(gridRowCellsArr[k]);
+        }
+    }
+    return gridCellsArr;
+}
+
+/**
  * When hovering a grid-cell without color, draw (apply color) on that cell,
  * else remove the color.
  */
 function draw() {
-    const gridSquareClasses = this.classList;
+    const gridCellClasses = this.classList;
     const className = 'color-square';
-    if (!gridSquareClasses.contains(className)) {
-        gridSquareClasses.add(className);
+    if (!gridCellClasses.contains(className)) {
+        gridCellClasses.add(className);
     }
 }
 
 /**
  * Add event listeners for when grid cells are hovered.
- * @param {Object} gridRows - Array of elements with class `grid__row`.
+ * @param {Object} gridCells - Array of elements with class `grid__cell`.
  */
-function addHoverEvent(gridRows) {
-    let gridColArr;
-    for (let i = 0; i < gridRows.length; i++) {
-        gridColArr = Array.from(gridRows[i].childNodes);
-        for (let k = 0; k < gridColArr.length; k++) {
-            gridColArr[k].addEventListener('mouseenter', draw);
-        }
+function addHoverEvent(gridCells) {
+    for (let i = 0; i < gridCells.length; i++) {
+        gridCells[i].addEventListener('mouseenter', draw);
     }
 }
 
 /**
  * Clear the sketchpad grid by removing all coloured cells.
- * @param {Object} gridRows - Array of elements with class `grid__row`.
+ * @param {Object} gridCells - Array of elements with class `grid__cell`.
  */
-function clearGrid(gridRows) {
-    let gridColArr;
-    for (let i = 0; i < gridRows.length; i++) {
-        gridColArr = Array.from(gridRows[i].childNodes);
-        for (let k = 0; k < gridColArr.length; k++) {
-            if (gridColArr[k].classList.contains('color-square')) {
-                gridColArr[k].classList.remove('color-square');
-            }
+function clearGrid(gridCells) {
+    for (let i = 0; i < gridCells.length; i++) {
+        if (gridCells[i].classList.contains('color-square')) {
+            gridCells[i].classList.remove('color-square');
         }
     }
 }
@@ -86,17 +96,17 @@ function clearGrid(gridRows) {
  */
 function updateGrid(newSize) {
     // Reassign global variables used to create new grid.
-    rows = newSize;
-    columns = newSize;
+    numRows = newSize;
+    numCols = newSize;
     // Create new grid, other required variables.
     const newGrid = createGrid();
     const oldGrid = document.querySelector('.grid');
     const root = document.documentElement;
-    // Reassign global variable `gridRows` used for clearing the grid.
-    gridRows = Array.from(newGrid.getElementsByClassName('grid__row'));
+    // Reassign global variable `gridCells`.
+    gridCells = getGridCells(newGrid);
     root.style.setProperty('--grid-size', newSize.toString());
     document.body.replaceChild(newGrid, oldGrid);
-    addHoverEvent(gridRows);
+    addHoverEvent(gridCells);
 }
 
 // Inserting sketchpad inside document.
@@ -104,19 +114,19 @@ const scriptElement = document.querySelector('script');
 document.body.insertBefore(gridContainer, scriptElement);
 
 // Drawing on the sketchpad.
-addHoverEvent(gridRows);
+addHoverEvent(gridCells);
 
 // Clearing the sketchpad.
 const clearGridButton = document.querySelector('.clear-input');
-clearGridButton.addEventListener('click', () => clearGrid(gridRows));
+clearGridButton.addEventListener('click', () => clearGrid(gridCells));
 
 // Updating the grid-size.
 const gridSizeInput = document.querySelector('.size-input');
-gridSizeInput.defaultValue = rows.toString();
+gridSizeInput.defaultValue = numRows.toString();
 gridSizeInput.addEventListener('change', function() {
     // Value equals empty string if input is not expected type (numeric).
     if (gridSizeInput.value) {
-        clearGrid(gridRows);
+        clearGrid(gridCells);
         updateGrid(gridSizeInput.value);
     }
 });
