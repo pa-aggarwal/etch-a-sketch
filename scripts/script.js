@@ -71,6 +71,56 @@ function normalDraw() {
     }
 }
 
+function getSaturation(min, max, valueL) {
+    if (min === max) {
+        return 0;
+    } else if (valueL < .5) {
+        return ((max - min) / (max + min));
+    } else if (valueL >= .5) {
+        return ((max - min) / (2 - max - min));
+    }
+}
+
+function getHue(min, max, valueR, valueG, valueB) {
+    let valueH;
+    if (min === max) {
+        valueH = 0;
+    } else if (valueR === max) {
+        valueH = (valueG - valueB) / (max - min);
+    } else if (valueG === max) {
+        valueH = 2 + (valueB - valueR) / (max - min);
+    } else if (valueB === max) {
+        valueH = 4 + (valueR - valueG) / (max - min);
+    }
+
+    valueH *= 60;
+    valueH = (valueH < 0) ? valueH + 360 : valueH;
+
+    return valueH;
+}
+
+function getHSLColor(rgbColor) {
+    const rgbValueStr = rgbColor.slice(rgbColor.indexOf('(') + 1, -1);
+    const rgbValueArr = rgbValueStr.split(', ');
+
+    let valueR = parseInt(rgbValueArr[0]);
+    let valueG = parseInt(rgbValueArr[1]);
+    let valueB = parseInt(rgbValueArr[2]);
+
+    valueR /= 255;
+    valueG /= 255;
+    valueB /= 255;
+
+    const min = Math.min(valueR, valueG, valueB);
+    const max = Math.max(valueR, valueG, valueB);
+
+    let valueL = Math.round(((min + max) / 2) * 100);
+    let valueS = Math.round(getSaturation(min, max, (min + max) / 2) * 100);
+    let valueH = Math.round(getHue(min, max, valueR, valueG, valueB));
+
+    return [valueH, valueS, valueL];
+}
+
 /**
  * Add event listeners for when grid cells are hovered.
  * @param {Object} drawFunction - function based on current drawing mode.
