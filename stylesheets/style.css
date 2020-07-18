@@ -2,7 +2,8 @@
     /* COLORS */
     --color-black: #000;
     --color-white: #FFF;
-    --color-grey: #F5F5F5;
+    --color-grey: #D6D6D6;
+    --color-grey-light: #F5F5F5;
     --color-turquoise: #2EC4B6;
     --color-turquoise-med: #9CE8E0;
     --color-turquoise-light: #DEF7F6;
@@ -19,12 +20,7 @@ html { background-color: var(--color-turquoise-light); }
 body {
     font-size: 1.6rem;
     font-family: 'Roboto', sans-serif;
-    padding: 2rem 3rem;
-    /* Horizontally and vertically centered relative to root element. */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    padding: 4.5rem 18rem;
 }
 
 h1 {
@@ -40,7 +36,13 @@ input {
     border-radius: .5rem;
     color: var(--color-white);
     display: inline-block;
+    font-weight: 500;
+    padding: 1rem var(--input-hori-padding);
+    transition: transform .2s;
 }
+
+/* Shift upwards and make bigger. */
+input:hover { transform: scale(1.1) translateY(-.2rem); }
 
 /* Remove spinners from number input. */
 input[type="number"]::-webkit-inner-spin-button,
@@ -53,8 +55,6 @@ input[type="number"]::-webkit-outer-spin-button {
     align-items: center;
     display: flex;
     justify-content: space-between;
-    margin-bottom: 1rem;
-    padding-right: 1rem;
 }
 
 .options-container {
@@ -62,14 +62,9 @@ input[type="number"]::-webkit-outer-spin-button {
     font-size: var(--input-font-size);
 }
 
-.clear-input {
-    margin-right: 2rem;
-    padding: 1rem var(--input-hori-padding);
-    text-transform: uppercase;
-}
+.options-container input + input { margin-left: 2rem; }
 
 .size-input {
-    padding: 1rem var(--input-hori-padding);
     width:
         calc(
             var(--input-font-size) +
@@ -78,10 +73,17 @@ input[type="number"]::-webkit-outer-spin-button {
         );
 }
 
+.color-input {
+    font-size: inherit;
+    height: 100%;
+}
+
+.clear-input { text-transform: uppercase; }
+
 .grid {
     background-color: var(--color-white);
-    border: var(--grid-border-width) solid var(--color-black);
-    width: 96rem;
+    border: var(--grid-border-width) solid var(--color-grey);
+    width: 100%;
 }
 
 .grid__row {

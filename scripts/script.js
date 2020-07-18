@@ -1,8 +1,8 @@
 /* GLOBAL VARIABLES */
+const defaultGridColor = 'rgb(255, 255, 255)';
+const defaultCellColor = '#9CE8E0';
 let numRows = 16;
 let numCols = 16;
-let defaultGridColor = 'rgb(255, 255, 255)';
-let defaultCellColor = '#9CE8E0';
 let currCellColor = defaultCellColor;
 let gridContainer = createGrid();
 let gridCells = getGridCells(gridContainer);
@@ -26,14 +26,12 @@ function createElementWithClasses(element, ...classNames) {
 function createGrid() {
     // Container for grid of square divs.
     const grid = createElementWithClasses('div', 'grid');
-    let cellClasses = ['grid__cell', 'animate-cell'];
-    let currRow;
-    let currCell;
+    let currRow, currCell;
 
     for (let i = 0; i < numRows; i++) {
         currRow = createElementWithClasses('div', 'grid__row');
         for (let j = 0; j < numCols; j++) {
-            currCell = createElementWithClasses('div', ...cellClasses);
+            currCell = createElementWithClasses('div', 'grid__cell');
             currCell.style.backgroundColor = defaultGridColor;
             currRow.appendChild(currCell);
         }
@@ -67,6 +65,7 @@ function getGridCells(grid) {
  */
 function draw() {
     if (this.style.backgroundColor === defaultGridColor) {
+        this.classList.add('animate-cell');
         this.style.backgroundColor = currCellColor;
     }
 }
@@ -83,9 +82,8 @@ function addHoverEvent(gridCells) {
 
 /**
  * Set all cell's background-colors to the original grid color.
- * @param {Object} gridCells - Array of elements with class `grid__cell`.
  */
-function clearGrid(gridCells) {
+function clearGrid() {
     for (let i = 0; i < gridCells.length; i++) {
         if (gridCells[i].style.backgroundColor !== defaultGridColor) {
             gridCells[i].style.backgroundColor = defaultGridColor;
@@ -101,7 +99,6 @@ function updateGrid(newSize) {
     // Reassign global variables used to create new grid.
     numRows = newSize;
     numCols = newSize;
-    // Create new grid, other required variables.
     const newGrid = createGrid();
     const oldGrid = document.querySelector('.grid');
     const root = document.documentElement;
@@ -113,12 +110,10 @@ function updateGrid(newSize) {
 }
 
 /**
- * Update global variable holding the current grid-cell background color.
+ * Change the global variable holding the current grid-cell background color.
  */
 function updateCellColor() {
-    // Keep colors in uppercase format.
-    const newColor = this.value.toUpperCase();
-    currCellColor = newColor;
+    currCellColor = this.value.toUpperCase();
 }
 
 // Inserting sketchpad inside document.
@@ -130,7 +125,7 @@ addHoverEvent(gridCells);
 
 // Clearing the sketchpad.
 const clearGridButton = document.querySelector('.clear-input');
-clearGridButton.addEventListener('click', () => clearGrid(gridCells));
+clearGridButton.addEventListener('click', () => clearGrid());
 
 // Updating the grid-size.
 const gridSizeInput = document.querySelector('.size-input');
@@ -138,7 +133,7 @@ gridSizeInput.defaultValue = numRows.toString();
 gridSizeInput.addEventListener('change', function() {
     // Value equals empty string if input is not expected type (numeric).
     if (gridSizeInput.value) {
-        clearGrid(gridCells);
+        clearGrid();
         updateGrid(gridSizeInput.value);
     }
 });
