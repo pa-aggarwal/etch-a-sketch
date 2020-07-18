@@ -1,6 +1,7 @@
 /* GLOBAL VARIABLES */
 const defaultGridColor = 'rgb(255, 255, 255)';
 const defaultCellColor = '#9CE8E0';
+const colorBlack = '#000';
 let numRows = 16;
 let numCols = 16;
 let cellColor = defaultCellColor;
@@ -71,6 +72,13 @@ function normalDraw() {
     }
 }
 
+/**
+ * Helper function for getHSLColor() to calculate saturation value.
+ * @param  {Number} min    - Minimum amongst red, green, blue values.
+ * @param  {Number} max    - Maximum amongst red, green, blue values.
+ * @param  {Number} valueL - Luminance value in HSL conversion.
+ * @return {Number}        - Saturation value in HSL conversion.
+ */
 function getSaturation(min, max, valueL) {
     if (min === max) {
         return 0;
@@ -81,6 +89,15 @@ function getSaturation(min, max, valueL) {
     }
 }
 
+/**
+ * Helper function for getHSLColor() to calculate hue value.
+ * @param  {Number} min    - Minimum amongst red, green, blue values.
+ * @param  {Number} max    - Maximum amongst red, green, blue values.
+ * @param  {Number} valueR - Red value in RGB color.
+ * @param  {Number} valueG - Green value in RGB color.
+ * @param  {Number} valueB - Blue value in RGB color.
+ * @return {Number}        - Hue value in HSL conversion.
+ */
 function getHue(min, max, valueR, valueG, valueB) {
     let valueH;
     if (min === max) {
@@ -99,6 +116,11 @@ function getHue(min, max, valueR, valueG, valueB) {
     return valueH;
 }
 
+/**
+ * Convert a provided RGB color into HSL format.
+ * @param  {String} rgbColor - RGB color in the format `rgb(num, num, num)`.
+ * @return {Object}          - Array of HSL values in H, S, L order.
+ */
 function getHSLColor(rgbColor) {
     const rgbValueStr = rgbColor.slice(rgbColor.indexOf('(') + 1, -1);
     const rgbValueArr = rgbValueStr.split(', ');
@@ -119,6 +141,30 @@ function getHSLColor(rgbColor) {
     let valueH = Math.round(getHue(min, max, valueR, valueG, valueB));
 
     return [valueH, valueS, valueL];
+}
+
+/**
+ * Draw function for darken drawing mode.
+ * If a grid cell's background-color is the grid's default color,
+ * behave like normalDraw(),
+ * else make its current color 10% darker until the cell becomes black.
+ */
+function darkenDraw() {
+    const currCellColor = this.style.backgroundColor;
+    if (currCellColor === defaultGridColor) {
+        this.classList.add('animate-cell');
+        this.style.backgroundColor = cellColor;
+    } else {
+        const hslArr = getHSLColor(currCellColor);
+        if (hslArr[2] > 0) {
+            // Subtract 10 from light value in HSL color if remains positive.
+            let light = (hslArr[2] >= 10) ? (hslArr[2] - 10) : 0;
+            let newColor = `hsl(${ hslArr[0] }, ${ hslArr[1] }%, ${ light }%)`;
+            this.style.backgroundColor = newColor;
+        } else if (hslArr[2] === 0) {
+            this.style.backgroundColor = colorBlack;
+        }
+    }
 }
 
 /**
