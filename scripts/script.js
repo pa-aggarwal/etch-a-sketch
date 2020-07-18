@@ -3,7 +3,8 @@ const defaultGridColor = 'rgb(255, 255, 255)';
 const defaultCellColor = '#9CE8E0';
 let numRows = 16;
 let numCols = 16;
-let currCellColor = defaultCellColor;
+let cellColor = defaultCellColor;
+let drawFunction = normalDraw;
 let gridContainer = createGrid();
 let gridCells = getGridCells(gridContainer);
 
@@ -60,23 +61,33 @@ function getGridCells(grid) {
 }
 
 /**
- * If a grid-cell's background-color is the grid's color (white), change the
- * background-color based on the current global cell color.
+ * Draw function for normal drawing mode.
+ * Change a grid-cell's background-color based on the current color setting.
  */
-function draw() {
+function normalDraw() {
     if (this.style.backgroundColor === defaultGridColor) {
         this.classList.add('animate-cell');
-        this.style.backgroundColor = currCellColor;
+        this.style.backgroundColor = cellColor;
     }
 }
 
 /**
  * Add event listeners for when grid cells are hovered.
- * @param {Object} gridCells - Array of elements with class `grid__cell`.
+ * @param {Object} drawFunction - function based on current drawing mode.
  */
-function addHoverEvent(gridCells) {
+function addHoverEvent(drawFunction) {
     for (let i = 0; i < gridCells.length; i++) {
-        gridCells[i].addEventListener('mouseenter', draw);
+        gridCells[i].addEventListener('mouseenter', drawFunction);
+    }
+}
+
+/**
+ * Remove event listeners for when grid cells being hovered.
+ * @param {Object} drawFunction - function based on previous drawing mode.
+ */
+function removeHoverEvent(drawFunction) {
+    for (let i = 0; i < gridCells.length; i++) {
+        gridCells[i].removeEventListener('mouseenter', drawFunction);
     }
 }
 
@@ -106,22 +117,41 @@ function updateGrid(newSize) {
     gridCells = getGridCells(newGrid);
     root.style.setProperty('--grid-size', newSize.toString());
     document.body.replaceChild(newGrid, oldGrid);
-    addHoverEvent(gridCells);
+    addHoverEvent(drawFunction);
 }
 
 /**
  * Change the global variable holding the current grid-cell background color.
  */
 function updateCellColor() {
-    currCellColor = this.value.toUpperCase();
+    cellColor = this.value.toUpperCase();
+}
+
+/**
+ * Change the global variable holding the draw function to call based on the
+ * new drawing mode selected.
+ */
+function updateDrawingMode() {
+    const newMode = this.id;
+    const oldDrawFunction = drawFunction;
+    if (newMode === 'normal-mode') {
+        drawFunction = normalDraw;
+    } else if (newMode === 'darken-mode') {
+        drawFunction = darkenDraw;
+    } else if (newMode === 'random-mode') {
+        drawFunction = randomDraw;
+    }
+    clearGrid();
+    removeHoverEvent(oldDrawFunction);
+    addHoverEvent(drawFunction);
 }
 
 // Inserting sketchpad inside document.
-const scriptElement = document.querySelector('script');
-document.body.insertBefore(gridContainer, scriptElement);
+const modesContainer = document.querySelector('.modes-container');
+document.body.insertBefore(gridContainer, modesContainer);
 
 // Drawing on the sketchpad.
-addHoverEvent(gridCells);
+addHoverEvent(drawFunction);
 
 // Clearing the sketchpad.
 const clearGridButton = document.querySelector('.clear-input');
@@ -144,3 +174,9 @@ colorPicker.setAttribute('value', defaultCellColor);
 colorPicker.setAttribute('placeholder', defaultCellColor);
 colorPicker.addEventListener('change', updateCellColor);
 // TODO: implement select() call.
+
+// Changing the drawing mode.
+const radioInputs = [...document.querySelectorAll('input[type="radio"]')];
+radioInputs.forEach(radioInput => {
+    radioInput.addEventListener('change', updateDrawingMode);
+});

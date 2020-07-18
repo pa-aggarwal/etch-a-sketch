@@ -20,6 +20,15 @@
                 <input type="button" class="clear-input" value="Clear">
             </div>
         </div>
+        <div class="modes-container">
+            <!-- Turn autocomplete attribute off to prevent Firefox from keeping checked state across page-loads. -->
+            <input type="radio" class="mode-input" name="mode" value="normal" id="normal-mode" autocomplete="off" checked>
+            <label for="normal-mode" class="mode-label">Normal</label>
+            <input type="radio" class="mode-input" name="mode" value="darken" id="darken-mode" autocomplete="off">
+            <label for="darken-mode" class="mode-label">Darken</label>
+            <input type="radio" class="mode-input" name="mode" value="random" id="random-mode" autocomplete="off">
+            <label for="random-mode" class="mode-label">Random</label>
+        </div>
         <script src="scripts/script.js" charset="utf-8"></script>
     </body>
 </html>
