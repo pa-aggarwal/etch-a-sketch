@@ -1,13 +1,15 @@
+/* IMPORTS */
+import {normalDraw, darkenDraw, randomDraw} from './draw.js';
+import {defaultGridColor} from './draw.js';
+
 /* GLOBAL VARIABLES */
-const defaultGridColor = 'rgb(255, 255, 255)';
-const defaultCellColor = '#9CE8E0';
-const colorBlack = '#000';
 let numRows = 16;
 let numCols = 16;
-let cellColor = defaultCellColor;
 let drawFunction = normalDraw;
 let gridContainer = createGrid();
 let gridCells = getGridCells(gridContainer);
+
+/* HELPER FUNCTIONS */
 
 /**
  * Create an element with the specified classes attached.
@@ -62,112 +64,6 @@ function getGridCells(grid) {
 }
 
 /**
- * Draw function for normal drawing mode.
- * Change a grid-cell's background-color based on the current color setting.
- */
-function normalDraw() {
-    if (this.style.backgroundColor === defaultGridColor) {
-        this.classList.add('animate-cell');
-        this.style.backgroundColor = cellColor;
-    }
-}
-
-/**
- * Helper function for getHSLColor() to calculate saturation value.
- * @param  {Number} min    - Minimum amongst red, green, blue values.
- * @param  {Number} max    - Maximum amongst red, green, blue values.
- * @param  {Number} valueL - Luminance value in HSL conversion.
- * @return {Number}        - Saturation value in HSL conversion.
- */
-function getSaturation(min, max, valueL) {
-    if (min === max) {
-        return 0;
-    } else if (valueL < .5) {
-        return ((max - min) / (max + min));
-    } else if (valueL >= .5) {
-        return ((max - min) / (2 - max - min));
-    }
-}
-
-/**
- * Helper function for getHSLColor() to calculate hue value.
- * @param  {Number} min    - Minimum amongst red, green, blue values.
- * @param  {Number} max    - Maximum amongst red, green, blue values.
- * @param  {Number} valueR - Red value in RGB color.
- * @param  {Number} valueG - Green value in RGB color.
- * @param  {Number} valueB - Blue value in RGB color.
- * @return {Number}        - Hue value in HSL conversion.
- */
-function getHue(min, max, valueR, valueG, valueB) {
-    let valueH;
-    if (min === max) {
-        valueH = 0;
-    } else if (valueR === max) {
-        valueH = (valueG - valueB) / (max - min);
-    } else if (valueG === max) {
-        valueH = 2 + (valueB - valueR) / (max - min);
-    } else if (valueB === max) {
-        valueH = 4 + (valueR - valueG) / (max - min);
-    }
-
-    valueH *= 60;
-    valueH = (valueH < 0) ? valueH + 360 : valueH;
-
-    return valueH;
-}
-
-/**
- * Convert a provided RGB color into HSL format.
- * @param  {String} rgbColor - RGB color in the format `rgb(num, num, num)`.
- * @return {Object}          - Array of HSL values in H, S, L order.
- */
-function getHSLColor(rgbColor) {
-    const rgbValueStr = rgbColor.slice(rgbColor.indexOf('(') + 1, -1);
-    const rgbValueArr = rgbValueStr.split(', ');
-
-    let valueR = parseInt(rgbValueArr[0]);
-    let valueG = parseInt(rgbValueArr[1]);
-    let valueB = parseInt(rgbValueArr[2]);
-
-    valueR /= 255;
-    valueG /= 255;
-    valueB /= 255;
-
-    const min = Math.min(valueR, valueG, valueB);
-    const max = Math.max(valueR, valueG, valueB);
-
-    let valueL = Math.round(((min + max) / 2) * 100);
-    let valueS = Math.round(getSaturation(min, max, (min + max) / 2) * 100);
-    let valueH = Math.round(getHue(min, max, valueR, valueG, valueB));
-
-    return [valueH, valueS, valueL];
-}
-
-/**
- * Draw function for darken drawing mode.
- * If a grid cell's background-color is the grid's default color,
- * behave like normalDraw(),
- * else make its current color 10% darker until the cell becomes black.
- */
-function darkenDraw() {
-    const currCellColor = this.style.backgroundColor;
-    if (currCellColor === defaultGridColor) {
-        this.classList.add('animate-cell');
-        this.style.backgroundColor = cellColor;
-    } else {
-        const hslArr = getHSLColor(currCellColor);
-        if (hslArr[2] > 0) {
-            // Subtract 10 from light value in HSL color if remains positive.
-            let light = (hslArr[2] >= 10) ? (hslArr[2] - 10) : 0;
-            let newColor = `hsl(${ hslArr[0] }, ${ hslArr[1] }%, ${ light }%)`;
-            this.style.backgroundColor = newColor;
-        } else if (hslArr[2] === 0) {
-            this.style.backgroundColor = colorBlack;
-        }
-    }
-}
-
-/**
  * Add event listeners for when grid cells are hovered.
  * @param {Object} drawFunction - function based on current drawing mode.
  */
@@ -217,13 +113,6 @@ function updateGrid(newSize) {
 }
 
 /**
- * Change the global variable holding the current grid-cell background color.
- */
-function updateCellColor() {
-    cellColor = this.value.toUpperCase();
-}
-
-/**
  * Change the global variable holding the draw function to call based on the
  * new drawing mode selected.
  */
@@ -242,6 +131,8 @@ function updateDrawingMode() {
     addHoverEvent(drawFunction);
 }
 
+/* MAIN CODE */
+
 // Inserting sketchpad inside document.
 const modesContainer = document.querySelector('.modes-container');
 document.body.insertBefore(gridContainer, modesContainer);
@@ -253,7 +144,7 @@ addHoverEvent(drawFunction);
 const clearGridButton = document.querySelector('.clear-input');
 clearGridButton.addEventListener('click', () => clearGrid());
 
-// Updating the grid-size.
+// Updating the sketchpad size.
 const gridSizeInput = document.querySelector('.size-input');
 gridSizeInput.defaultValue = numRows.toString();
 gridSizeInput.addEventListener('change', function() {
@@ -263,13 +154,6 @@ gridSizeInput.addEventListener('change', function() {
         updateGrid(gridSizeInput.value);
     }
 });
-
-// Update the gridColor variable to user's preference.
-const colorPicker = document.querySelector('.color-input');
-colorPicker.setAttribute('value', defaultCellColor);
-colorPicker.setAttribute('placeholder', defaultCellColor);
-colorPicker.addEventListener('change', updateCellColor);
-// TODO: implement select() call.
 
 // Changing the drawing mode.
 const radioInputs = [...document.querySelectorAll('input[type="radio"]')];
