@@ -55,6 +55,7 @@ input[type="number"]::-webkit-outer-spin-button {
     align-items: center;
     display: flex;
     justify-content: space-between;
+    margin-bottom: 1rem;
 }
 
 .options-container {
@@ -83,6 +84,7 @@ input[type="number"]::-webkit-outer-spin-button {
 .grid {
     background-color: var(--color-white);
     border: var(--grid-border-width) solid var(--color-grey);
+    margin-bottom: 2.5rem;
     width: 100%;
 }
 
@@ -107,3 +109,31 @@ input[type="number"]::-webkit-outer-spin-button {
     from { opacity: 0; }
     to { opacity: 1; }
 }
+
+.modes-container {
+    display: flex;
+    position: relative;
+    text-align: center;
+}
+
+.mode-input {
+    /* Code for hiding radio buttons (with accessibility concerns)
+    https://stackoverflow.com/questions/18078871/hide-check-radio-button-with-css */
+    position: fixed;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.mode-label {
+    background-color: var(--color-turquoise);
+    border-radius: .75rem;
+    color: var(--color-white);
+    flex: 1;
+    font-size: 2rem;
+    font-weight: 500;
+    letter-spacing: .2rem;
+    padding: 1rem 0;
+    text-transform: uppercase;
+}
+
+.mode-label ~ .mode-label { margin-left: 3rem; }

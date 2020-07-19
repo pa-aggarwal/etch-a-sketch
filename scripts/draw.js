@@ -11,6 +11,7 @@ let cellColor = '#9CE8E0';
  */
 function normalDraw() {
     if (this.style.backgroundColor === defaultGridColor) {
+        // FIX BUG: Cell animation isn't visible unless applied here.
         this.classList.add('animate-cell');
         this.style.backgroundColor = cellColor;
     }
@@ -96,6 +97,7 @@ function getHSLColor(rgbColor) {
 function darkenDraw() {
     const currCellColor = this.style.backgroundColor;
     if (currCellColor === defaultGridColor) {
+        // FIX BUG: Cell animation isn't visible unless applied here.
         this.classList.add('animate-cell');
         this.style.backgroundColor = cellColor;
     } else {
@@ -111,8 +113,21 @@ function darkenDraw() {
     }
 }
 
+/**
+ * Draw function for random drawing mode.
+ * Change the background-color of the grid cell being hovered to a random color.
+ */
 function randomDraw() {
+    let hexSymbols = '0123456789ABCDEF';
+    let randColor = '#';
 
+    for (let i = 0; i < 6; i++) {
+        randColor += hexSymbols.charAt(Math.floor(Math.random() * 16));
+    }
+
+    // FIX BUG: Cell animation isn't visible unless applied here.
+    this.classList.add('animate-cell');
+    this.style.backgroundColor = randColor;
 }
 
 /**
