@@ -6,6 +6,7 @@ import {defaultGridColor} from './draw.js';
 let numRows = 16;
 let numCols = 16;
 let drawFunction = normalDraw;
+let drawingMode = 'normal-mode';
 let gridContainer = createGrid();
 let gridCells = getGridCells(gridContainer);
 
@@ -119,6 +120,7 @@ function updateGrid(newSize) {
 function updateDrawingMode() {
     const newMode = this.id;
     const oldDrawFunction = drawFunction;
+
     if (newMode === 'normal-mode') {
         drawFunction = normalDraw;
     } else if (newMode === 'darken-mode') {
@@ -126,12 +128,50 @@ function updateDrawingMode() {
     } else if (newMode === 'random-mode') {
         drawFunction = randomDraw;
     }
+
+    // Function requires previous drawingMode value (don't change order).
+    styleDrawingModeLabels(newMode);
+    drawingMode = newMode;
+
     clearGrid();
     removeHoverEvent(oldDrawFunction);
     addHoverEvent(drawFunction);
 }
 
+/**
+ * Change appearance of drawing mode labels based on the active drawing mode.
+ * @param {String} newMode - New active drawing mode (allow undefined).
+ */
+function styleDrawingModeLabels(newMode) {
+
+    const labelStr = `label[for="${ drawingMode }"]`;
+    let currActiveLabel = document.querySelector(labelStr);
+    let allModeLabels = [...document.querySelectorAll('label.mode-label')];
+    let specialLabel;
+
+    if (newMode === undefined) {
+        currActiveLabel.classList.add('active-mode-label');
+        specialLabel = currActiveLabel;
+    } else {
+        currActiveLabel.classList.remove('active-mode-label');
+        const newLabelStr = `label[for="${ newMode }"]`;
+        let newActiveLabel = document.querySelector(newLabelStr);
+        newActiveLabel.classList.remove('inactive-mode-label');
+        newActiveLabel.classList.add('active-mode-label');
+        specialLabel = newActiveLabel;
+    }
+
+    for (let i = 0; i < allModeLabels.length; i++) {
+        if (allModeLabels[i] !== specialLabel) {
+            allModeLabels[i].classList.add('inactive-mode-label');
+        }
+    }
+}
+
 /* MAIN CODE */
+
+// Change appearance drawing mode labels.
+styleDrawingModeLabels();
 
 // Inserting sketchpad inside document.
 const modesContainer = document.querySelector('.modes-container');
