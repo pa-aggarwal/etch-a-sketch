@@ -13,7 +13,7 @@
     --grid-height: calc(48rem - var(--grid-border-width));
     --grid-size: 16; /* Changed in script.js file. */
     --input-font-size: 2rem;
-    --input-hori-padding: 2rem;
+    --input-option-padding: 1rem;
 }
 
 html { background-color: var(--color-turquoise-light); }
@@ -32,19 +32,6 @@ h1 {
     text-shadow: .3rem -.3rem var(--color-turquoise-med);
 }
 
-input {
-    background-color: var(--color-turquoise);
-    border-radius: .5rem;
-    color: var(--color-white);
-    display: inline-block;
-    font-weight: 500;
-    padding: 1rem var(--input-hori-padding);
-    transition: transform .2s;
-}
-
-/* Shift upwards and make bigger. */
-input:hover { transform: scale(1.1) translateY(-.2rem); }
-
 /* Remove spinners from number input. */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
@@ -60,27 +47,54 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .options-container {
-    display: inline-block;
+    display: flex;
     font-size: var(--input-font-size);
 }
 
-.options-container input + input { margin-left: 2rem; }
-
-.size-input {
-    width:
-        calc(
-            var(--input-font-size) +
-            calc(var(--input-hori-padding) * 2) +
-            .75rem
-        );
+.option {
+    flex: 1;
+    padding: var(--input-option-padding);
+    position: relative;
 }
 
-.color-input {
-    font-size: inherit;
-    height: 100%;
+.option + .option { margin-left: 1.5rem; }
+
+.option input {
+    background-color: var(--color-white);
+    /* Input fills space of div. */
+    display: block;
+    width: calc(var(--input-font-size) + 1rem);
 }
 
-.clear-input { text-transform: uppercase; }
+/* Move size-input down so it's not hidden by the label. */
+.size-input:focus { transform: translateY(30%); }
+
+.option-label {
+    background-color: var(--color-white);
+    border-radius: 50%;
+    box-shadow: 0 .5rem .13rem rgba(0, 0, 0, .2);
+    color: var(--color-turquoise);
+    display: inline-block;
+    padding:
+        var(--input-option-padding)
+        calc(var(--input-option-padding) + .25rem);
+    /* Horizontally and vertically center. */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.option-label:hover { cursor: pointer; }
+
+.option-label:active {
+    box-shadow: 0 .3rem .13rem rgba(0, 0, 0, .2);
+    /* Increase vertical translation to make label appear 'pressed'. */
+    transform: translate(-50%, -45%);
+}
+
+/* Move label upwards to show hidden numeric input for grid size. */
+.size-input:focus + .option-label { transform: translate(-50%, -6rem); }
 
 .grid {
     background-color: var(--color-white);
